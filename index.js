@@ -37,7 +37,7 @@ async function run() {
         app.get('/orders', async (req, res) => {
             let query = {};
             if (req.query.email) {
-                let query = { email: req.query.email }
+                query = { email: req.query.email }
             }
             const cursor = orderColletion.find(query);
             const orders = await cursor.toArray();
@@ -50,6 +50,26 @@ async function run() {
             const result = await orderColletion.insertOne(order);
             res.send(result);
         })
+        app.patch('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const status = req.body.status
+            const query = { _id: ObjectId(id) }
+            const updatedDoc = {
+                $set: {
+                    status: status
+                }
+            }
+            const result = await orderColletion.updateOne(query, updatedDoc);
+            res.send(result);
+        })
+
+        app.delete('/orders/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderColletion.deleteOne(query);
+            res.send(result);
+        })
+
 
     }
     finally {
